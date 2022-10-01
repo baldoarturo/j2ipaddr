@@ -172,7 +172,7 @@ ip_network('10.10.10.5/24')
 Simply install with pip.
 
 ``` Console
-$ pip install j2ipaddr
+pip install j2ipaddr
 ```
 
 To insert the filters on your Jinja2 processor, simply use the following syntax.
@@ -190,4 +190,30 @@ Or, probably an easier way, use the following one-liner to load all the filters 
 import jinja2
 import j2ipaddr.filters
 jinja2.filters.FILTERS = {**jinja2.filters.FILTERS, **filters.load_all()}
+```
+
+On your templates, you can do this as an example:
+
+### Variables
+
+``` YAML
+host:
+  interfaces:
+    Te1/0/1:
+      ipv4_addresses:
+        - 10.10.10.5/24
+```
+
+### Template
+
+``` YAML
+router ospf 10
+  network {{host.interfaces.Te1/0/1.ipv4_addresses[0] | ip_network }} {{host.interfaces.Te1/0/1.ipv4_addresses[0] | ip_wildcard  }} area 0.0.0.0
+```
+
+The output would looks like this:
+
+``` Text
+router ospf 10
+  network 10.0.0.0 0.0.0.255 area 0.0.0.0
 ```
