@@ -1,4 +1,7 @@
+from inspect import isfunction
 from netaddr import IPNetwork
+
+import j2ipaddr
 
 
 def ip_address(addr):
@@ -112,7 +115,7 @@ def load_all():
     Returns a dict will all the functions inside filters, except load_all
     """
     import inspect
-    functions = dict(inspect.getmembers(
-        __import__(__name__), inspect.isfunction))
+    from j2ipaddr import filters
+    functions = dict(inspect.getmembers(filters, isfunction))
     del functions['load_all']
     return functions
