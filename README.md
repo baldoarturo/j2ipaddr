@@ -188,8 +188,8 @@ Or, probably an easier way, use the following one-liner to load all the filters 
 
 ``` Python
 import jinja2
-import j2ipaddr.filters
-jinja2.filters.FILTERS = {**jinja2.filters.FILTERS, **filters.load_all()}
+from j2ipaddr import filters
+jinja2.filters.FILTERS.update(filters.load_all())
 ```
 
 On your templates, you can do this as an example:
