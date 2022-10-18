@@ -8,7 +8,6 @@ version = "1.0.4"
 description = "Jinja2 filters for IP addresses, the easy way"
 readme = "README.md"
 authors = [{ name = "Arturo Baldo", email = "baldoarturo@mail.com" }]
-license = "GPL-3.0-or-later"
 classifiers = [
     "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
     "Programming Language :: Python",
