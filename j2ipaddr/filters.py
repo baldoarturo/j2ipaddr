@@ -1,5 +1,5 @@
 from inspect import isfunction
-from netaddr import IPNetwork
+from netaddr import IPNetwork, IPAddress
 
 import j2ipaddr
 
@@ -96,7 +96,7 @@ def ip_network_first(addr):
     ip_network('10.10.10.5/24')
     > 10.10.10.1
     """
-    return IPNetwork(addr).first
+    return IPAddress(IPNetwork(addr).first).__str__()
 
 
 def ip_network_last(addr):
@@ -107,7 +107,7 @@ def ip_network_last(addr):
     ip_network('10.10.10.5/24')
     > 10.10.10.254
     """
-    return IPNetwork(addr).last
+    return IPAddress(IPNetwork(addr).last).__str__()
 
 
 def load_all():
