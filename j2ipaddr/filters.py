@@ -96,7 +96,7 @@ def ip_network_first(addr):
     ip_network('10.10.10.5/24')
     > 10.10.10.1
     """
-    return IPAddress(IPNetwork(addr).first).__str__()
+    return IPAddress(IPNetwork(addr).first+1).__str__()
 
 
 def ip_network_last(addr):
@@ -107,7 +107,7 @@ def ip_network_last(addr):
     ip_network('10.10.10.5/24')
     > 10.10.10.254
     """
-    return IPAddress(IPNetwork(addr).last).__str__()
+    return IPAddress(IPNetwork(addr).last-1).__str__()
 
 
 def load_all():
