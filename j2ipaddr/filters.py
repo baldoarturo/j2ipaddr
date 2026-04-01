@@ -42,7 +42,7 @@ def ip_hostmask(addr):
     Returns a wilcard or hostmask for a combination of IP address and subnet mask
 
     Example:
-    ip_netmask('10.10.10.5/24')
+    ip_hostmask('10.10.10.5/24')
     > 0.0.0.255
     """
     return IPNetwork(addr).hostmask
