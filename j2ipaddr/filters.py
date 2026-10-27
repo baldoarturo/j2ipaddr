@@ -1,4 +1,3 @@
-import inspect
 from netaddr import IPNetwork, AddrFormatError
 
 
@@ -58,11 +57,7 @@ def ip_hostmask(addr):
     return str(_network(addr).hostmask)
 
 
-def ip_wildcard(addr):
-    """
-    > for ip_hostmask(addr)
-    """
-    return ip_hostmask(addr)
+ip_wildcard = ip_hostmask  # alias, same as ip_hostmask(addr)
 
 
 def ip_network(addr):
@@ -129,13 +124,22 @@ def ip_network_last(addr):
     return str(net[-2] if net.size > 2 else net[-1])
 
 
+FILTERS = {
+    'ip_address': ip_address,
+    'ip_prefixlen': ip_prefixlen,
+    'ip_netmask': ip_netmask,
+    'ip_hostmask': ip_hostmask,
+    'ip_wildcard': ip_wildcard,
+    'ip_network': ip_network,
+    'ip_broadcast': ip_broadcast,
+    'ip_network_hosts_size': ip_network_hosts_size,
+    'ip_network_first': ip_network_first,
+    'ip_network_last': ip_network_last,
+}
+
+
 def load_all():
     """
-    Returns a dict will all the functions defined in filters, except load_all
+    Returns a dict with all the filters, ready for jinja2.filters.FILTERS.update()
     """
-    functions = {
-        name: func
-        for name, func in inspect.getmembers(inspect.getmodule(load_all), inspect.isfunction)
-        if func.__module__ == __name__ and name != 'load_all' and not name.startswith('_')
-    }
-    return functions
+    return dict(FILTERS)

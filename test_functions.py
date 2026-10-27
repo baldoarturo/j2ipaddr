@@ -8,10 +8,14 @@ test_address = '198.51.100.4/29'
 def test_load_all():
     functions = filters.load_all()
     assert isinstance(functions, dict)
-    assert 'load_all' not in functions
-    assert 'isfunction' not in functions
-    assert all(name.startswith('ip_') for name in functions)
-    assert 'ip_address' in functions
+    assert set(functions) == {
+        'ip_address', 'ip_prefixlen', 'ip_netmask', 'ip_hostmask', 'ip_wildcard',
+        'ip_network', 'ip_broadcast', 'ip_network_hosts_size', 'ip_network_first',
+        'ip_network_last',
+    }
+    assert all(callable(f) for f in functions.values())
+    functions.clear()
+    assert filters.load_all()
 
 
 def test_ip_address():
