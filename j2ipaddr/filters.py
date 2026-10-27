@@ -1,5 +1,17 @@
 import inspect
-from netaddr import IPNetwork
+from netaddr import IPNetwork, AddrFormatError
+
+
+def _network(addr):
+    """
+    Returns an IPNetwork for addr, raising AddrFormatError with the offending value on bad input
+    """
+    try:
+        return IPNetwork(addr)
+    except (AddrFormatError, TypeError, ValueError) as e:
+        raise AddrFormatError(
+            f"invalid IP address or network: {addr!r} (expected something like '10.10.10.5/24')"
+        ) from e
 
 
 def ip_address(addr):
@@ -10,7 +22,7 @@ def ip_address(addr):
     ip_address('10.10.10.5/24')
     > 10.10.10.5
     """
-    return str(IPNetwork(addr).ip)
+    return str(_network(addr).ip)
 
 
 def ip_prefixlen(addr):
@@ -21,7 +33,7 @@ def ip_prefixlen(addr):
     ip_prefixlen('10.10.10.5/24')
     > 24
     """
-    return IPNetwork(addr).prefixlen
+    return _network(addr).prefixlen
 
 
 def ip_netmask(addr):
@@ -32,7 +44,7 @@ def ip_netmask(addr):
     ip_netmask('10.10.10.5/24')
     > 255.255.255.0
     """
-    return str(IPNetwork(addr).netmask)
+    return str(_network(addr).netmask)
 
 
 def ip_hostmask(addr):
@@ -43,7 +55,7 @@ def ip_hostmask(addr):
     ip_hostmask('10.10.10.5/24')
     > 0.0.0.255
     """
-    return str(IPNetwork(addr).hostmask)
+    return str(_network(addr).hostmask)
 
 
 def ip_wildcard(addr):
@@ -61,7 +73,7 @@ def ip_network(addr):
     ip_network('10.10.10.5/24')
     > 10.10.10.0
     """
-    return str(IPNetwork(addr).network)
+    return str(_network(addr).network)
 
 
 def ip_broadcast(addr):
@@ -74,7 +86,7 @@ def ip_broadcast(addr):
     ip_broadcast('10.10.10.5/24')
     > 10.10.10.255
     """
-    broadcast = IPNetwork(addr).broadcast
+    broadcast = _network(addr).broadcast
     return None if broadcast is None else str(broadcast)
 
 
@@ -87,7 +99,7 @@ def ip_network_hosts_size(addr):
     ip_network_hosts_size('10.10.10.5/24')
     > 254
     """
-    size = IPNetwork(addr).size
+    size = _network(addr).size
     return size - 2 if size > 2 else size
 
 
@@ -100,7 +112,7 @@ def ip_network_first(addr):
     ip_network_first('10.10.10.5/24')
     > 10.10.10.1
     """
-    net = IPNetwork(addr)
+    net = _network(addr)
     return str(net[1] if net.size > 2 else net[0])
 
 
@@ -113,7 +125,7 @@ def ip_network_last(addr):
     ip_network_last('10.10.10.5/24')
     > 10.10.10.254
     """
-    net = IPNetwork(addr)
+    net = _network(addr)
     return str(net[-2] if net.size > 2 else net[-1])
 
 
@@ -124,6 +136,6 @@ def load_all():
     functions = {
         name: func
         for name, func in inspect.getmembers(inspect.getmodule(load_all), inspect.isfunction)
-        if func.__module__ == __name__ and name != 'load_all'
+        if func.__module__ == __name__ and name != 'load_all' and not name.startswith('_')
     }
     return functions

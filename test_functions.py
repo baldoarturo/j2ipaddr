@@ -1,4 +1,5 @@
 import pytest
+from netaddr import AddrFormatError
 from j2ipaddr import filters
 
 test_address = '198.51.100.4/29'
@@ -67,6 +68,8 @@ def test_ip_network_last():
     assert filters.ip_network_last('2001:db8::5/64') == '2001:db8::ffff:ffff:ffff:fffe'
 
 
-def test_invalid_address():
-    with pytest.raises(Exception):
-        filters.ip_network('not-an-ip')
+@pytest.mark.parametrize('func', [f for f in filters.load_all().values()])
+@pytest.mark.parametrize('bad', ['not-an-ip', '', '10.0.0.300/24', '10.0.0.1/33', None, 5])
+def test_invalid_address(func, bad):
+    with pytest.raises(AddrFormatError, match='invalid IP address or network'):
+        func(bad)
