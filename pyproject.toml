@@ -7,7 +7,7 @@ name = "j2ipaddr"
 version = "1.0.7"
 description = "Jinja2 filters for IP addresses, the easy way"
 readme = "README.md"
-authors = [{ name = "Arturo Baldo", email = "baldoarturo@mail.com" }]
+authors = [{ name = "Arturo Baldo", email = "baldoarturo@gmail.com" }]
 classifiers = [
     "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
     "Programming Language :: Python",
@@ -19,9 +19,15 @@ dependencies = [
 ]
 requires-python = ">=3.8"
 
+[project.optional-dependencies]
+test = ["pytest"]
+
 
 [project.urls]
 Homepage = "https://github.com/baldoarturo/j2ipaddr"
 
 [tool.setuptools]
 packages = ["j2ipaddr"]
+
+[tool.pytest.ini_options]
+testpaths = ["test_functions.py"]
