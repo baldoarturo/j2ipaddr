@@ -14,7 +14,7 @@ def test_load_all():
 
 
 def test_ip_address():
-    assert str(filters.ip_address(test_address)) == '198.51.100.4'
+    assert filters.ip_address(test_address) == '198.51.100.4'
 
 
 def test_ip_prefixlen():
@@ -22,23 +22,23 @@ def test_ip_prefixlen():
 
 
 def test_ip_netmask():
-    assert str(filters.ip_netmask(test_address)) == '255.255.255.248'
+    assert filters.ip_netmask(test_address) == '255.255.255.248'
 
 
 def test_ip_hostmask():
-    assert str(filters.ip_hostmask(test_address)) == '0.0.0.7'
+    assert filters.ip_hostmask(test_address) == '0.0.0.7'
 
 
 def test_ip_wildcard():
-    assert str(filters.ip_wildcard(test_address)) == '0.0.0.7'
+    assert filters.ip_wildcard(test_address) == '0.0.0.7'
 
 
 def test_ip_network():
-    assert str(filters.ip_network(test_address)) == '198.51.100.0'
+    assert filters.ip_network(test_address) == '198.51.100.0'
 
 
 def test_ip_broadcast():
-    assert str(filters.ip_broadcast(test_address)) == '198.51.100.7'
+    assert filters.ip_broadcast(test_address) == '198.51.100.7'
 
 
 def test_ip_broadcast_none_without_broadcast():

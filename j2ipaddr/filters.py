@@ -10,7 +10,7 @@ def ip_address(addr):
     ip_address('10.10.10.5/24')
     > 10.10.10.5
     """
-    return IPNetwork(addr).ip
+    return str(IPNetwork(addr).ip)
 
 
 def ip_prefixlen(addr):
@@ -32,7 +32,7 @@ def ip_netmask(addr):
     ip_netmask('10.10.10.5/24')
     > 255.255.255.0
     """
-    return IPNetwork(addr).netmask
+    return str(IPNetwork(addr).netmask)
 
 
 def ip_hostmask(addr):
@@ -43,7 +43,7 @@ def ip_hostmask(addr):
     ip_hostmask('10.10.10.5/24')
     > 0.0.0.255
     """
-    return IPNetwork(addr).hostmask
+    return str(IPNetwork(addr).hostmask)
 
 
 def ip_wildcard(addr):
@@ -61,7 +61,7 @@ def ip_network(addr):
     ip_network('10.10.10.5/24')
     > 10.10.10.0
     """
-    return IPNetwork(addr).network
+    return str(IPNetwork(addr).network)
 
 
 def ip_broadcast(addr):
@@ -74,7 +74,8 @@ def ip_broadcast(addr):
     ip_broadcast('10.10.10.5/24')
     > 10.10.10.255
     """
-    return IPNetwork(addr).broadcast
+    broadcast = IPNetwork(addr).broadcast
+    return None if broadcast is None else str(broadcast)
 
 
 def ip_network_hosts_size(addr):
