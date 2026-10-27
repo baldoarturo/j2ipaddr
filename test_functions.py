@@ -51,6 +51,17 @@ def test_ip_broadcast_none_without_broadcast():
     assert filters.ip_broadcast('198.51.100.4/31') is None
 
 
+def test_ip_broadcast_none_for_ipv6():
+    assert filters.ip_broadcast('2001:db8::5/64') is None
+    assert filters.ip_broadcast('2001:db8::5/127') is None
+    assert filters.ip_broadcast('::1') is None
+
+
+@pytest.mark.parametrize('addr', [' 198.51.100.4/29', '198.51.100.4/29 ', '\t198.51.100.4/29\n'])
+def test_whitespace_is_ignored(addr):
+    assert filters.ip_network(addr) == '198.51.100.0'
+
+
 def test_ip_network_hosts_size():
     assert filters.ip_network_hosts_size(test_address) == 6
     assert filters.ip_network_hosts_size('10.0.0.5/24') == 254

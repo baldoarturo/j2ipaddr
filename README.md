@@ -25,7 +25,9 @@ This package intends to provide a set of filters and handler to the Python 3 [ne
 
 ## What
 
-Included filters are the following:
+Included filters are the following. IPv4 and IPv6 are supported.
+Every filter returns a `str`, except `ip_prefixlen` and `ip_network_hosts_size` which return an `int`.
+Surrounding whitespace in the input is ignored.
 
 ### ip_address(addr)
 
@@ -37,7 +39,7 @@ ip_address('10.10.10.5/24')
 ```
 
 ``` Jinja2
-{{ '10.10.10.5/24 | ip_address }}
+{{ '10.10.10.5/24' | ip_address }}
 > 10.10.10.5
 ```
 
@@ -51,9 +53,11 @@ ip_prefixlen('10.10.10.5/24')
 ```
 
 ``` Jinja2
-{{ '10.10.10.5/24 | ip_prefixlen }}
+{{ '10.10.10.5/24' | ip_prefixlen }}
 > 24
 ```
+
+Returns an `int`.
 
 ### ip_netmask(addr)
 
@@ -65,13 +69,13 @@ ip_netmask('10.10.10.5/24')
 ```
 
 ``` Jinja2
-{{ '10.10.10.5/24 | ip_netmask }}
+{{ '10.10.10.5/24' | ip_netmask }}
 > 255.255.255.0
 ```
 
 ### ip_hostmask(addr)
 
-Returns a wilcard or hostmask for a combination of IP address and subnet mask
+Returns a wildcard or hostmask for a combination of IP address and subnet mask
 
 ``` Python
 ip_hostmask('10.10.10.5/24')
@@ -79,7 +83,7 @@ ip_hostmask('10.10.10.5/24')
 ```
 
 ``` Jinja2
-{{ '10.10.10.5/24 | ip_hostmask }}
+{{ '10.10.10.5/24' | ip_hostmask }}
 > 0.0.0.255
 ```
 
@@ -93,7 +97,7 @@ ip_wildcard('10.10.10.5/24')
 ```
 
 ``` Jinja2
-{{ '10.10.10.5/24 | ip_wildcard }}
+{{ '10.10.10.5/24' | ip_wildcard }}
 > 0.0.0.255
 ```
 
@@ -107,7 +111,7 @@ ip_network('10.10.10.5/24')
 ```
 
 ``` Jinja2
-{{ '10.10.10.5/24 | ip_network_hosts_size }}
+{{ '10.10.10.5/24' | ip_network }}
 > 10.10.10.0
 ```
 
@@ -121,50 +125,66 @@ ip_broadcast('10.10.10.5/24')
 ```
 
 ``` Jinja2
-{{ '10.10.10.5/24 | ip_broadcast }}
+{{ '10.10.10.5/24' | ip_broadcast }}
 > 10.10.10.255
 ```
 
+Returns `None` when there is no broadcast address: IPv6, /31 and /32. Jinja2 renders `None` as the text "None", so guard it with `{% if %}` or `| default('')` if those can show up.
+
 ### ip_network_hosts_size(addr)
 
-Returns the size of the subnet for a combination of IP address and subnet mask
+Returns the number of usable hosts for a combination of IP address and subnet mask
 
 ``` Python
 ip_network_hosts_size('10.10.10.5/24')
-> 255
+> 254
 ```
 
 ``` Jinja2
-{{ '10.10.10.5/24 | ip_network_hosts_size }}
-> 255
+{{ '10.10.10.5/24' | ip_network_hosts_size }}
+> 254
 ```
+
+Returns an `int`. The network and broadcast addresses are not counted. /31 gives 2 (RFC 3021) and /32 gives 1.
 
 ### ip_network_first(addr)
 
-Returns the first usable address in network address for a combination of IP address and subnet mask
+Returns the first usable address in network for a combination of IP address and subnet mask
 
 ``` Python
-ip_network('10.10.10.5/24')
+ip_network_first('10.10.10.5/24')
 > 10.10.10.1
 ```
 
 ``` Jinja2
-{{ '10.10.10.5/24 | ip_network_hosts_size }}
+{{ '10.10.10.5/24' | ip_network_first }}
 > 10.10.10.1
 ```
+
+For /31 and /32 there is nothing to skip, so it returns the first address of the network.
 
 ### ip_network_last(addr)
 
-Returns the last usable address in network address for a combination of IP address and subnet mask
+Returns the last usable address in network for a combination of IP address and subnet mask
 
 ``` Python
-ip_network('10.10.10.5/24')
+ip_network_last('10.10.10.5/24')
 > 10.10.10.254
 ```
 
 ``` Jinja2
-{{ '10.10.10.5/24 | ip_network_hosts_size }}
+{{ '10.10.10.5/24' | ip_network_last }}
 > 10.10.10.254
+```
+
+For /31 and /32 there is nothing to skip, so it returns the last address of the network.
+
+### Invalid input
+
+An input that is not a valid IP address or network (including `None` or an undefined variable) raises `netaddr.AddrFormatError` with a message that shows the offending value:
+
+``` Text
+invalid IP address or network: '10.0.0.300/24' (expected something like '10.10.10.5/24')
 ```
 
 ## How
@@ -180,7 +200,7 @@ The filter name can be changed by adjusting the dict key name.
 
 ``` Python
 import jinja2
-import j2ipaddr.filters
+from j2ipaddr import filters
 jinja2.filters.FILTERS['ip_prefixlen'] = filters.ip_prefixlen
 ```
 
@@ -206,14 +226,14 @@ host:
 
 ### Template
 
-``` YAML
+``` Jinja2
 router ospf 10
-  network {{host.interfaces.Te1/0/1.ipv4_addresses[0] | ip_network }} {{host.interfaces.Te1/0/1.ipv4_addresses[0] | ip_wildcard  }} area 0.0.0.0
+  network {{ host.interfaces.Te1/0/1.ipv4_addresses[0] | ip_network }} {{ host.interfaces.Te1/0/1.ipv4_addresses[0] | ip_wildcard }} area 0.0.0.0
 ```
 
 The output would looks like this:
 
 ``` Text
 router ospf 10
-  network 10.0.0.0 0.0.0.255 area 0.0.0.0
+  network 10.10.10.0 0.0.0.255 area 0.0.0.0
 ```

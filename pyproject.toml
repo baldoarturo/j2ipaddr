@@ -1,10 +1,10 @@
 [build-system]
-requires      = ["setuptools>=61.0.0", "wheel"]
+requires      = ["setuptools>=61.0.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "j2ipaddr"
-version = "1.1.0"
+version = "1.1.1"
 description = "Jinja2 filters for IP addresses, the easy way"
 readme = "README.md"
 authors = [{ name = "Arturo Baldo", email = "baldoarturo@gmail.com" }]
@@ -12,22 +12,31 @@ classifiers = [
     "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: System :: Networking",
+    "Typing :: Typed",
 ]
 keywords = ["jinja2", "jinja", "filters", "netaddr", "ipaddr", "networking"]
 dependencies = [
-    "netaddr",
+    "netaddr>=0.8",
 ]
 requires-python = ">=3.8"
 
 [project.optional-dependencies]
 test = ["pytest"]
 
-
 [project.urls]
 Homepage = "https://github.com/baldoarturo/j2ipaddr"
 
 [tool.setuptools]
 packages = ["j2ipaddr"]
+
+[tool.setuptools.package-data]
+j2ipaddr = ["py.typed"]
 
 [tool.pytest.ini_options]
 testpaths = ["test_functions.py"]
